@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"   "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.kakaopay.todo.dao.TodoItemMapper">
+
+    <insert id="insertTodo" parameterType="com.kakaopay.todo.dao.TodoItem">
+        <![CDATA[
+          INSERT INTO TODO (contents, createdDate, refID)
+          VALUES (
+            #{contents},
+            #{createdDate},
+            #{refId}
+          )
+        ]]>
+    </insert>
+
+    <select id="selectTodoItem" parameterType="java.lang.Integer" resultType="com.kakaopay.todo.dao.TodoItem">
+        <![CDATA[
+          SELECT * FROM TODO
+            WHERE ID = #{id}
+        ]]>
+    </select>
+
+    <update id="updateTodoItem" parameterType="java.util.Map">
+        <![CDATA[
+          UPDATE TODO SET
+            contents = #{param.contents},
+            createdDate = #{param.createdDate},
+            modifiedDate = #{param.modifiedDate},
+            completedDate = #{param.completedDate},
+            refId = #{param.refId}
+          WHERE id = #{param.id}
+        ]]>
+    </update>
+
+    <select id="getTodoItems" resultType="com.kakaopay.todo.dao.TodoItem">
+        <![CDATA[
+          SELECT * FROM TODO
+        ]]>
+    </select>
+
+
+</mapper>
