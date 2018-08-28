@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Todo Application</title>
+
+    <style type="text/css">
+        table, th, td {
+            border: 1px solid black;
+            border-collapse: collapse;
+        }
+
+        th, td {
+            padding: 5px;
+            text-align: left;
+        }
+
+        th {
+            text-align: left;
+        }
+    </style>
+    <script  src="https://code.jquery.com/jquery-3.2.1.js"
+             integrity="sha256-DZAnKJ/6XZ9si04Hgrsxu/8s717jcIzLy3oi35EouyE="  crossorigin="anonymous">
+    </script>
+</head>
+<body onload="loadTableData();">
+    <h1>Todo Application</h1>
+
+
+    <script type="text/javascript">
+        function loadTableData() {
+            $.ajax({
+                url: 'http://localhost:8004/todos',
+                type: 'GET',
+                contentType: "application/json",
+                jsonCallback: "jsonRead" ,
+                headers:{'Accept': 'application/json', 'X-Request': 'JSON'},
+                success: function(response) {
+                    window.data=response;
+                    // var json_data = JSON.stringify(response);
+
+                    displayTable(response);
+                },
+                error: function(error) {
+                    console.log(error);
+                }
+            });
+        }
+        
+        function displayTable(urlData) {
+            $('#urlTable').empty();
+            var table = document.createElement('table');
+            $("#urlTable").append(table);
+
+            var tblHeader = ['ID', '할일', '작성일시', '최종수정일시', '완료처리'];
+            var tr = document.createElement('tr');
+            table.append(tr);
+            for(var i = 0; i< tblHeader.length; i++){
+                var th = document.createElement('th');
+                tr.append(th);
+                th.innerHTML = tblHeader[i];
+            }
+
+            var tblHeaderValue = ['id', 'task', 'createdDate', 'modifiedDate', 'completedDate'];
+            for (var i = 0; i<urlData.length; i++) {
+                var tr = document.createElement('tr');
+                table.append(tr);
+            }
+        }
+
+    </script>
+</body>
+</html>
