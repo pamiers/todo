@@ -37,9 +37,13 @@
                 headers:{'Accept': 'application/json', 'X-Request': 'JSON'},
                 success: function(response) {
                     window.data=response;
-                    // var json_data = JSON.stringify(response);
 
-                    displayTable(response);
+                    var json_data = JSON.stringify(response);
+                    var json = JSON.parse(json_data);
+
+                    // document.write(json[0].contents);
+
+                    displayTable(json);
                 },
                 error: function(error) {
                     console.log(error);
@@ -47,10 +51,18 @@
             });
         }
         
-        function displayTable(urlData) {
-            $('#urlTable').empty();
+        function displayTable(json) {
+            clearItemTable();
+
+            if (json != undefined) {
+                $.each(json.resultMapList,function(i, row){
+                    fnAddItemRow(row.aa , row.bb);
+                } );
+
+            }
+
             var table = document.createElement('table');
-            $("#urlTable").append(table);
+
 
             var tblHeader = ['ID', '할일', '작성일시', '최종수정일시', '완료처리'];
             var tr = document.createElement('tr');
@@ -67,6 +79,11 @@
                 table.append(tr);
             }
         }
+
+        function clearItemTable(){
+            $('#tbodyID').empty();
+        }
+
 
     </script>
 </body>

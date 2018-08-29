@@ -1,9 +1,10 @@
-package com.kakaopay.todo.com.kakaopay.todo.controller;
+package com.kakaopay.todo.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.kakaopay.todo.dao.TodoItem;
 import com.kakaopay.todo.dao.manager.TodoManager;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -33,7 +34,7 @@ public class TodoController {
     }
 
     @GetMapping
-    public List<TodoItem> getTodoItems() {
+    public ResponseEntity getTodoItems() {
         ObjectMapper mapper = new ObjectMapper();
         System.out.println("get Todo!");
         return todoManager.getTodoItems();

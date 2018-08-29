@@ -2,30 +2,42 @@ package com.kakaopay.todo.dao.manager;
 
 import com.kakaopay.todo.dao.TodoItem;
 import com.kakaopay.todo.dao.TodoItemMapper;
+import org.json.JSONArray;
+import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
 @Component
 public class TodoManagerImpl implements TodoManager {
     @Autowired
     private TodoItemMapper itemMapper;
 
+    private HttpHeaders responseHeaders;
+    public TodoManagerImpl() {
+        responseHeaders = new HttpHeaders();
+        responseHeaders.add("Content-Type", "application/json;charset=UTF-8");
+    }
+
     @Override
-    public boolean addTodo(TodoItem todoItem) {
+    public ResponseEntity addTodo(TodoItem todoItem) {
+        JSONObject outputObject = new JSONObject();
+
         try {
             itemMapper.insertTodo(todoItem);
+            Map<String, Object> map = getMap(todoItem);
+            outputObject.put("meta", map);
             System.out.println("add success!");
-            return true;
+            return new ResponseEntity<>(outputObject.toString(), responseHeaders, HttpStatus.OK);
         } catch (Exception e) {
             e.printStackTrace();
-            return false;
+            return new ResponseEntity<>(outputObject.toString(), responseHeaders, HttpStatus.BAD_REQUEST);
         }
 
     }
@@ -68,15 +80,19 @@ public class TodoManagerImpl implements TodoManager {
     }
 
     @Override
-    public List<TodoItem> getTodoItems() {
+    public ResponseEntity getTodoItems() {
         System.out.println("get Todos");
         List<TodoItem> todoItems = itemMapper.getTodoItems();
 
+        JSONArray jsonArray = new JSONArray();
         for (TodoItem todoItem : todoItems) {
+            Map<String, Object> map = getMap(todoItem);
+            jsonArray.put(map);
             System.out.println(todoItem.toString());
         }
 
-        return todoItems;
+        System.out.println(jsonArray.toString());
+        return new ResponseEntity<>(jsonArray.toString(), responseHeaders, HttpStatus.OK);
     }
 
     @Override
