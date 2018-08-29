@@ -3,6 +3,6 @@ CREATE TABLE IF NOT EXISTS TODO (
   contents VARCHAR(100),
   createdDate VARCHAR(20),
   modifiedDate VARCHAR(20),
-  completedDate varchar(20),
+  complete BOOLEAN,
   refId VARCHAR(100)
 );

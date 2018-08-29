@@ -4,10 +4,11 @@
 
     <insert id="insertTodo" parameterType="com.kakaopay.todo.dao.TodoItem">
         <![CDATA[
-          INSERT INTO TODO (contents, createdDate, refID)
+          INSERT INTO TODO (contents, createdDate, complete, refID)
           VALUES (
             #{contents},
             #{createdDate},
+            #{complete},
             #{refId}
           )
         ]]>
@@ -26,7 +27,7 @@
             contents = #{param.contents},
             createdDate = #{param.createdDate},
             modifiedDate = #{param.modifiedDate},
-            completedDate = #{param.completedDate},
+            complete = #{param.complete},
             refId = #{param.refId}
           WHERE id = #{param.id}
         ]]>

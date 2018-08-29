@@ -34,7 +34,7 @@ public class TodoController {
     }
 
     @GetMapping
-    public ResponseEntity getTodoItems() {
+    public List<TodoItem> getTodoItems() {
         ObjectMapper mapper = new ObjectMapper();
         System.out.println("get Todo!");
         return todoManager.getTodoItems();

@@ -57,9 +57,13 @@
 
 * Sequence diagram
     1. 할일 추가
+    ![할일 추가 Sequence diagram](./img/addTodo.png)
     2. 할일 수정
+    ![할일 수정 Sequence diagram](./img/updateTodo.png)
     3. 할일 목록 조회
+    ![할일 목록 조회 Sequence diagram](./img/getTodos.png)
     4. 할일 완료처리
+    ![할일 완료처리 Sequence diagram](./img/completeTodo.png)
     
 * 비기능 요구사항 및 제약사항
     1. 웹 어플리케션으로 개발
@@ -77,9 +81,23 @@
 |com.h2database:h2||
 |mybatis-spring-boot-starter||
 
-## API Specifications
+## 실행 방법 및 API Specifications
 
-|Action|API|Parameter|Body|Success Response|Fail Response|
+* Using IDE
+    * Run TodoApplication
+    * 8004번 포트
+    * localhost:8004로 접속
+
+* API Specifications
+
+|Action|API|
+|:--------:|:-----:|
+|할일 추가|POST: localhost:8004/todos|
+|할일 수정|POST: localhost:8004/todos/{id}|
+|할일 조회|GET: localhost:8004/todos|
+|완료 처리|POST: localhost:8004/todos/{id}/complete|
+
+
 
 
 

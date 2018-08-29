@@ -13,6 +13,8 @@ import org.springframework.stereotype.Component;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @Component
 public class TodoManagerImpl implements TodoManager {
@@ -30,6 +32,16 @@ public class TodoManagerImpl implements TodoManager {
         JSONObject outputObject = new JSONObject();
 
         try {
+            String contents = todoItem.getContents();
+            String [] arr = contents.split("[ ]");
+            if (arr.length > 1) {
+                String [] sub = arr[1].trim().split("[@]");
+                String refId = Stream.of(sub).filter(s -> s != null && !s.isEmpty()).collect(Collectors.joining(","));
+                todoItem.setRefId(refId);
+                System.out.println("refId: " + refId);
+            }
+            todoItem.setComplete(false);
+            todoItem.setCreatedDate(LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
             itemMapper.insertTodo(todoItem);
             Map<String, Object> map = getMap(todoItem);
             outputObject.put("meta", map);
@@ -58,13 +70,14 @@ public class TodoManagerImpl implements TodoManager {
                             return false;
                         }
                         TodoItem item = itemMapper.selectTodoItem(Integer.parseInt(r));
-                        if (item.getCompletedDate() == null && origin.getCompletedDate() != null) {
-                            origin.setCompletedDate(null);
+                        if (item.isComplete() == false && origin.isComplete()) {
+                            origin.setComplete(false);
                         }
                     }
                     origin.setRefId(todoItem.getRefId());
                 }
                 origin.setModifiedDate(LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
+                origin.setComplete(false);
                 Map<String, Object> param = getMap(origin);
                 itemMapper.updateTodoItem(id, param);
                 System.out.println("update " + id + " success!!");
@@ -80,7 +93,7 @@ public class TodoManagerImpl implements TodoManager {
     }
 
     @Override
-    public ResponseEntity getTodoItems() {
+    public List<TodoItem> getTodoItems() {
         System.out.println("get Todos");
         List<TodoItem> todoItems = itemMapper.getTodoItems();
 
@@ -92,7 +105,7 @@ public class TodoManagerImpl implements TodoManager {
         }
 
         System.out.println(jsonArray.toString());
-        return new ResponseEntity<>(jsonArray.toString(), responseHeaders, HttpStatus.OK);
+        return todoItems;
     }
 
     @Override
@@ -105,13 +118,13 @@ public class TodoManagerImpl implements TodoManager {
             String[] refArr = ((String) ref.get()).split("[,]");
             for (String refId : refArr) {
                 TodoItem refItem = itemMapper.selectTodoItem(Integer.parseInt(refId));
-                if (refItem.getCompletedDate() == null) {
+                if (!refItem.isComplete()) {
                     return false;
                 }
             }
         }
 
-        todoItem.setCompletedDate(LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
+        todoItem.setComplete(true);
         Map<String, Object> param = getMap(todoItem);
         itemMapper.updateTodoItem(id, param);
 
@@ -136,9 +149,7 @@ public class TodoManagerImpl implements TodoManager {
             param.put("modifiedDate", d);
         });
 
-        Optional.ofNullable(todoItem.getCompletedDate()).ifPresent(d -> {
-            param.put("completedDate", d);
-        });
+        param.put("complete", todoItem.isComplete());
 
         Optional.ofNullable(todoItem.getRefId()).ifPresent(r -> {
             param.put("refId", r);

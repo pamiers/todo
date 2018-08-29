@@ -8,7 +8,7 @@ import java.util.List;
 public interface TodoManager {
     ResponseEntity addTodo(TodoItem todoItem);
     boolean updateTodo(Integer id, TodoItem todoItem);
-    ResponseEntity getTodoItems();
+    List<TodoItem> getTodoItems();
     boolean complete(Integer id);
 
 }

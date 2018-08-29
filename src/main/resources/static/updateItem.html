@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <script  src="https://code.jquery.com/jquery-3.2.1.js"
+             integrity="sha256-DZAnKJ/6XZ9si04Hgrsxu/8s717jcIzLy3oi35EouyE="  crossorigin="anonymous">
+    </script>
+</head>
+<body>
+<h1>Todo Application</h1>
+<fieldset>
+    <legend>Update Todo Item:</legend>
+    Task: <input type="text" id="contents"><br>
+    <button onclick="updateTodo()">Save Todo</button>
+</fieldset>
+
+<script type="text/javascript">
+    function updateTodo() {
+        var contents = document.getElementById('contents').value;
+        var id = opener.document.getElementById('targetId').value;
+        var sendInfo = {"contents":contents}
+        var urlInfo = 'http://localhost:8004/todos/'+id
+        $.ajax({
+            type: 'POST',
+            url: urlInfo,
+            data: JSON.stringify(sendInfo),
+            contentType: "application/json; charset=utf-8",
+            traditional: true,
+            success: function (data) {
+                alert('TODO update!!!');
+                window.onunload = refreshParent;
+                window.close();
+            }
+        });
+    }
+
+    function refreshParent() {
+        window.opener.location.reload();
+    }
+
+</script>
+
+
+</body>
+</html>

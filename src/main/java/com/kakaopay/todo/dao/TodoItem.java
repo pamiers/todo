@@ -5,8 +5,16 @@ public class TodoItem {
     private String contents;
     private String createdDate;
     private String modifiedDate;
-    private String completedDate;
+    private boolean complete;
     private String refId;
+
+    public boolean isComplete() {
+        return complete;
+    }
+
+    public void setComplete(boolean complete) {
+        this.complete = complete;
+    }
 
     public String getRefId() {
         return refId;
@@ -46,14 +54,6 @@ public class TodoItem {
 
     public void setModifiedDate(String modifiedDate) {
         this.modifiedDate = modifiedDate;
-    }
-
-    public String getCompletedDate() {
-        return completedDate;
-    }
-
-    public void setCompletedDate(String completedDate) {
-        this.completedDate = completedDate;
     }
 
     public String toString() {

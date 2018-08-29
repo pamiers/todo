@@ -22,69 +22,108 @@
     <script  src="https://code.jquery.com/jquery-3.2.1.js"
              integrity="sha256-DZAnKJ/6XZ9si04Hgrsxu/8s717jcIzLy3oi35EouyE="  crossorigin="anonymous">
     </script>
+
 </head>
 <body onload="loadTableData();">
-    <h1>Todo Application</h1>
 
+<h1>Todo Application</h1>
+<p><a href="JavaScript:newWindow()">Add ToDo Item</a></p>
+<div id="urlTable">
+</div>
+<input type="hidden" id="targetId" value="">
 
-    <script type="text/javascript">
-        function loadTableData() {
-            $.ajax({
-                url: 'http://localhost:8004/todos',
-                type: 'GET',
-                contentType: "application/json",
-                jsonCallback: "jsonRead" ,
-                headers:{'Accept': 'application/json', 'X-Request': 'JSON'},
-                success: function(response) {
-                    window.data=response;
+<script type="text/javascript">
+    function newWindow() {
+        var url = "/addItem.html";
+        window.open(url, "", "width=400, height=400, left=600");
+    }
 
-                    var json_data = JSON.stringify(response);
-                    var json = JSON.parse(json_data);
-
-                    // document.write(json[0].contents);
-
-                    displayTable(json);
-                },
-                error: function(error) {
-                    console.log(error);
-                }
-            });
-        }
-        
-        function displayTable(json) {
-            clearItemTable();
-
-            if (json != undefined) {
-                $.each(json.resultMapList,function(i, row){
-                    fnAddItemRow(row.aa , row.bb);
-                } );
-
+    function loadTableData() {
+        $.ajax({
+            url: 'http://localhost:8004/todos',
+            type: 'GET',
+            contentType: "application/json",
+            jsonCallback: "jsonRead",
+            headers: {'Accept': 'application/json', 'X-Request': 'JSON'},
+            success: function (response) {
+                window.data = response;
+                var json_data = JSON.stringify(response);
+                var json = JSON.parse(json_data);
+                displayTable(json);
+            },
+            error: function (error) {
+                console.log(error);
             }
+        });
+    }
 
-            var table = document.createElement('table');
+    function displayTable(json) {
+        clearItemTable();
+        var table = document.createElement('table');
+        $("#urlTable").append(table);
 
+        var header = ['id', '할일', '작성일시', '최종수정일시', '완료처리'];
+        var tr = document.createElement('tr');
+        table.append(tr);
+        for (var i = 0; i < header.length; i++) {
+            var th = document.createElement('th');
+            tr.appendChild(th);
+            th.innerHTML = header[i];
+        }
 
-            var tblHeader = ['ID', '할일', '작성일시', '최종수정일시', '완료처리'];
+        var headerValue = ['id', 'contents', 'createdDate', 'modifiedDate', 'complete', 'refId'];
+        for (var i = 0; i < json.length; i++) {
             var tr = document.createElement('tr');
             table.append(tr);
-            for(var i = 0; i< tblHeader.length; i++){
-                var th = document.createElement('th');
-                tr.append(th);
-                th.innerHTML = tblHeader[i];
-            }
+            for (var j = 0; j < headerValue.length; j++) {
+                if (headerValue[j] == 'refId') {
+                    continue;
+                }
+                var td = document.createElement('td');
+                tr.append(td);
 
-            var tblHeaderValue = ['id', 'task', 'createdDate', 'modifiedDate', 'completedDate'];
-            for (var i = 0; i<urlData.length; i++) {
-                var tr = document.createElement('tr');
-                table.append(tr);
+                if (headerValue[j] == 'complete') {
+                    var method = 'complete(' + json[i]['id'] + ')';
+                    var html = '<button onclick=' + method + '>Complete</button>';
+                    td.innerHTML = json[i][headerValue[j]] + html;
+                } else if (headerValue[j] == 'contents') {
+                    var method = 'update(' + json[i]['id'] + ')';
+                    var html = '<button onclick=' + method + '>Change</button>';
+                    td.innerHTML = json[i][headerValue[j]] + html;
+                } else {
+                    td.innerHTML = json[i][headerValue[j]];
+                }
+
             }
         }
 
-        function clearItemTable(){
-            $('#tbodyID').empty();
-        }
+    }
+
+    function update(targetId) {
+        document.getElementById('targetId').value = targetId;
+        var pWin = window.open("/updateItem.html", "", "width=400, height=400, left=600");
+        pWin.document.getElementById('targetId').value = targetId;
+    }
+
+    function complete(id) {
+        var url = 'http://localhost:8004/todos/' + id + '/complete';
+        $.ajax({
+            type: 'POST',
+            url: url,
+            contentType: "application/json; charset=utf-8",
+            traditional: true,
+            success: function (data) {
+                alert('status changed!!!');
+                window.location.reload();
+            }
+        });
+    }
+
+    function clearItemTable() {
+        $('#tbodyID').empty();
+    }
 
 
-    </script>
+</script>
 </body>
 </html>
